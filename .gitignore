@@ -1,0 +1,6 @@
+/target
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
