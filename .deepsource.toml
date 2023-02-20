@@ -1,6 +1,9 @@
 version = 1
 
 [[analyzers]]
+name = "sql"
+
+[[analyzers]]
 name = "rust"
 
   [analyzers.meta]
@@ -8,3 +11,6 @@ name = "rust"
 
 [[analyzers]]
 name = "docker"
+
+[[transformers]]
+name = "rustfmt"
