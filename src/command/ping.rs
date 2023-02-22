@@ -11,7 +11,7 @@ use crate::event::interaction_create::InteractionContext;
 pub struct Ping;
 
 impl InteractionContext<'_> {
-    pub async fn execute_ping(self, latency: Latency) -> Result<()> {
+    pub async fn execute_ping(&self, latency: Latency) -> Result<()> {
         let now = std::time::Instant::now();
 
         self.handle

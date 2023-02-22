@@ -1,5 +1,7 @@
 use futures_util::StreamExt;
+use sea_query::{Iden, PostgresQueryBuilder, Query};
 use sparkle_convenience::Bot;
+use sqlx::{pool::PoolConnection, postgres::PgPoolOptions, PgPool, Postgres};
 use std::{env, sync::Arc};
 use twilight_cache_inmemory::InMemoryCache;
 use twilight_gateway::{stream::ShardEventStream, EventTypeFlags, Intents};
@@ -12,10 +14,9 @@ mod utils;
 
 #[derive(Debug)]
 pub struct Context {
-    pub client: Arc<Client>,
-    pub cache: Arc<InMemoryCache>,
     pub bot: Bot,
-    //pub shards: Vec<Shard>,
+    pub cache: Arc<InMemoryCache>,
+    pub pool: PgPool,
 }
 
 #[tokio::main]
@@ -30,12 +31,15 @@ async fn main() -> anyhow::Result<()> {
     let intents = Intents::GUILD_MESSAGES | Intents::GUILD_VOICE_STATES;
     let event_types =
         EventTypeFlags::READY | EventTypeFlags::INTERACTION_CREATE | EventTypeFlags::MESSAGE_CREATE;
-    let client = Arc::new(Client::new(token.clone()));
     let cache = Arc::new(InMemoryCache::new());
 
     let (bot, mut shards) = Bot::new(token.clone(), intents, event_types).await?;
 
-    let context = Arc::new(Context { client, cache, bot });
+    let pool = PgPool::connect(&env::var("DATABASE_URL")?).await?;
+    sqlx::migrate!().run(&pool).await?;
+
+    let context = Arc::new(Context { cache, bot, pool });
+
     let mut stream = ShardEventStream::new(shards.iter_mut());
 
     while let Some((shard, event)) = stream.next().await {
@@ -53,7 +57,7 @@ async fn main() -> anyhow::Result<()> {
         };
         context.cache.update(&event);
 
-        tokio::spawn(handler::handle_event(
+        tokio::spawn(Context::handle_event(
             event,
             context.clone(),
             shard.latency().clone(),
@@ -61,4 +65,11 @@ async fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+#[derive(Iden)]
+enum Users {
+    Table,
+    #[iden = "id"]
+    Id,
 }
