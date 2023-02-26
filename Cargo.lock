@@ -175,6 +175,8 @@ dependencies = [
  "env_logger",
  "futures-util",
  "metrics-runtime",
+ "rosetta-build",
+ "rosetta-i18n",
  "sea-query",
  "serde_json",
  "sparkle-convenience",
@@ -310,6 +312,12 @@ dependencies = [
  "quote",
  "unicode-xid",
 ]
+
+[[package]]
+name = "convert_case"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
 
 [[package]]
 name = "core-foundation"
@@ -1945,6 +1953,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "rosetta-build"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f697b8b3f19bee20f30dc87213d05ce091c43bc733ab1bfc98b0e5cdd9943f3"
+dependencies = [
+ "convert_case",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "tinyjson",
+]
+
+[[package]]
+name = "rosetta-i18n"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c5298de832602aecc9458398f435d9bff0be57da7aac11221b6ff3d4ef9503de"
+
+[[package]]
 name = "rustix"
 version = "0.36.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2319,6 +2347,7 @@ dependencies = [
  "sqlx-rt",
  "stringprep",
  "thiserror",
+ "time 0.3.17",
  "tokio-stream",
  "url",
  "webpki-roots",
@@ -2436,6 +2465,7 @@ version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a561bf4617eebd33bca6434b988f39ed798e527f51a1e797d0ee4f61c0a38376"
 dependencies = [
+ "itoa 1.0.5",
  "serde",
  "time-core",
  "time-macros",
@@ -2455,6 +2485,12 @@ checksum = "d967f99f534ca7e495c575c62638eebc2898a8c84c119b89e250477bc4ba16b2"
 dependencies = [
  "time-core",
 ]
+
+[[package]]
+name = "tinyjson"
+version = "2.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ab95735ea2c8fd51154d01e39cf13912a78071c2d89abc49a7ef102a7dd725a"
 
 [[package]]
 name = "tinyvec"
