@@ -1,3 +1,4 @@
+use dotenvy::dotenv;
 use futures_util::StreamExt;
 use sea_query::{Iden, PostgresQueryBuilder, Query};
 use sparkle_convenience::Bot;
