@@ -1,0 +1,32 @@
+{
+    "Create Basic Command": {
+        "prefix": "command",
+        "body": [
+          "use anyhow::Result;",
+          "use sparkle_convenience::reply::Reply;",
+          "use twilight_gateway::Latency;",
+          "use twilight_interactions::command::{CommandModel, CreateCommand};",
+          "use twilight_util::builder::embed::EmbedBuilder;",
+          "",
+          "use crate::event::interaction_create::InteractionContext;",
+          "",
+          "#[derive(CommandModel, CreateCommand)]",
+          "#[command(name = \"${1:command_name}\", desc = \"${2:description}\")]",
+          "pub struct ${1:command_name};",
+          "",
+          "impl InteractionContext<'_> {",
+          "    pub async fn execute_${1:command_name}(&self) -> Result<()> {",
+          "        let now = std::time::Instant::now();",
+          "",
+          "        self.handle",
+          "            .reply(Reply::new().content(\"Response\"))",
+          "            .await?;",
+        "",
+          "        Ok(())",
+          "    }",
+          "}",
+          ""
+        ],
+        "description": "Create Basic Command"
+      }
+}
