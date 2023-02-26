@@ -8,10 +8,8 @@ use twilight_model::{
         application_command::{CommandData, InteractionChannel},
         InteractionData,
     },
-    channel::ChannelType,
     id::{marker::ChannelMarker, Id},
 };
-use twilight_util::builder::embed::EmbedBuilder;
 
 use crate::event::interaction_create::InteractionContext;
 
@@ -33,7 +31,7 @@ pub enum Set {
 #[command(name = "welcome_channel", desc = "Set up the welcome channel")]
 pub struct WelcomeChannel {
     #[command(
-        desc = "the channel to set as the welcome channel",
+        desc = "set or update the channel as the welcome channel",
         channel_types = "guild_text"
     )]
     channel: Id<ChannelMarker>,
@@ -52,7 +50,49 @@ impl InteractionContext<'_> {
         match settings {
             Settings::Set(set) => match set {
                 Set::WelcomeChannel(welcome_channel) => {
-                    sqlx::query("INSERT INTO settings (guild_id, name, value) VALUES ($1, $2, $3)")
+                    let settings = sqlx::query!(
+                        "SELECT value FROM settings WHERE guild_id = $1 and name = $2",
+                        self.interaction
+                            .guild_id
+                            .unwrap()
+                            .to_string()
+                            .parse::<i64>()?,
+                        "welcome_channel"
+                    )
+                    .fetch_all(&self.context.pool)
+                    .await?;
+
+                    tracing::info!("{:?}", settings);
+
+                    if settings.len() > 0 {
+                        let new_channel = &sqlx::query!(
+                            "UPDATE settings SET value = $1 WHERE guild_id = $2 and name = $3 RETURNING value",
+                            welcome_channel.channel.to_string(),
+                            self.interaction
+                                .guild_id
+                                .unwrap()
+                                .to_string()
+                                .parse::<i64>()?,
+                            "welcome_channel"
+                        )
+                        .fetch_all(&self.context.pool)
+                        .await?[0];
+
+                        tracing::info!("{:#?}", new_channel);
+                        self.handle
+                            .reply(
+                                Reply::new()
+                                    .content(format!(
+                                        "Welcome channel was updated to {}",
+                                        new_channel.value.parse::<Id<ChannelMarker>>()?.mention()
+                                    ))
+                                    .ephemeral(),
+                            )
+                            .await?;
+                        return Ok(());
+                    }
+
+                    sqlx::query("INSERT INTO settings (guild_id, name, value, type) VALUES ($1, $2, $3, $4)")
                         .bind(
                             self.interaction
                                 .guild_id
@@ -61,15 +101,19 @@ impl InteractionContext<'_> {
                                 .parse::<i64>()?,
                         )
                         .bind("welcome_channel")
-                        .bind(welcome_channel.channel.to_string())
+                        .bind(welcome_channel.channel.to_string()).bind("i64")
                         .execute(&self.context.pool)
                         .await?;
 
                     self.handle
-                        .reply(Reply::new().content(format!(
-                            "Welcome Channel: {}",
-                            welcome_channel.channel.mention()
-                        )))
+                        .reply(
+                            Reply::new()
+                                .content(format!(
+                                    "Welcome channel set to {}",
+                                    welcome_channel.channel.mention()
+                                ))
+                                .ephemeral(),
+                        )
                         .await?;
                 }
             },
