@@ -20,7 +20,7 @@ fn main() -> Result<()> {
 
     rosetta_build::config()
         .source("en", "locales/en.json")
-        .source("fr", "locales/fr.json")
+        .source("de", "locales/de.json")
         .fallback("en")
         .generate()?;
 

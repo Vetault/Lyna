@@ -1,0 +1,12 @@
+{
+    "apiUrl": "http://5.189.160.119:4000",
+    "apiKey": "LAHH66wSsGM7U4qf-1te39S314O5xN_fdp7nwvariMvJFvwto54gSUZnebvCpdQFHDbLseNHhBeViHDIes1K4BnJwF1JPg",
+    "files": [
+        {
+            "language": "en",
+            "format": "simple_json",
+            "source": "master.json",
+            "target": "locales/%slug%.json"
+        }
+    ]
+}
