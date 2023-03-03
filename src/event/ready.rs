@@ -3,7 +3,7 @@ use twilight_interactions::command::CreateCommand;
 use twilight_model::{application::command::Command, gateway::payload::incoming::Ready};
 
 use crate::{
-    command::{ping::Ping, settings::Settings},
+    command::{ping::Ping, settings::Settings, test::Test2},
     Context,
 };
 
@@ -12,6 +12,7 @@ impl Context {
         let commands: Vec<Command> = vec![
             Ping::create_command().into(),
             Settings::create_command().into(),
+            Test2::create_command().into(),
         ];
 
         tracing::info!("{:#?}", Settings::create_command());

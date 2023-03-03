@@ -1,0 +1,5 @@
+{
+  "hello": "Hallo",
+  "hello_name": "Hallo, {name}!",
+  "test": "Dies ist ein Test"
+}

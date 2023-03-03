@@ -4,9 +4,14 @@ use sea_query::{Iden, PostgresQueryBuilder, Query};
 use sparkle_convenience::Bot;
 use sqlx::{pool::PoolConnection, postgres::PgPoolOptions, PgPool, Postgres};
 use std::{env, sync::Arc};
+use translations::Lang;
 use twilight_cache_inmemory::InMemoryCache;
 use twilight_gateway::{stream::ShardEventStream, EventTypeFlags, Intents};
 use twilight_http::Client;
+
+mod translations {
+    rosetta_i18n::include_translations!();
+}
 
 mod command;
 mod event;
@@ -42,6 +47,9 @@ async fn main() -> anyhow::Result<()> {
     let context = Arc::new(Context { cache, bot, pool });
 
     let mut stream = ShardEventStream::new(shards.iter_mut());
+
+    println!("{}", Lang::En.hello());
+    println!("{}", Lang::En.hello_name("John"));
 
     while let Some((shard, event)) = stream.next().await {
         let event = match event {

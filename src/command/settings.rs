@@ -23,12 +23,12 @@ pub enum Settings {
 #[derive(CommandModel, CreateCommand)]
 #[command(name = "set", desc = "Setting Up The Bot")]
 pub enum Set {
-    #[command(name = "welcome_channel")]
+    #[command(name = "welcome")]
     WelcomeChannel(WelcomeChannel),
 }
 
 #[derive(CommandModel, CreateCommand)]
-#[command(name = "welcome_channel", desc = "Set up the welcome channel")]
+#[command(name = "welcome", desc = "Set up the welcome channel")]
 pub struct WelcomeChannel {
     #[command(
         desc = "set or update the channel as the welcome channel",
@@ -49,7 +49,7 @@ impl InteractionContext<'_> {
 
         match settings {
             Settings::Set(set) => match set {
-                Set::WelcomeChannel(welcome_channel) => {
+                Set::WelcomeChannel(welcome) => {
                     let settings = sqlx::query!(
                         "SELECT value FROM settings WHERE guild_id = $1 and name = $2",
                         self.interaction
@@ -67,7 +67,7 @@ impl InteractionContext<'_> {
                     if settings.len() > 0 {
                         let new_channel = &sqlx::query!(
                             "UPDATE settings SET value = $1 WHERE guild_id = $2 and name = $3 RETURNING value",
-                            welcome_channel.channel.to_string(),
+                            welcome.channel.to_string(),
                             self.interaction
                                 .guild_id
                                 .unwrap()
@@ -101,7 +101,7 @@ impl InteractionContext<'_> {
                                 .parse::<i64>()?,
                         )
                         .bind("welcome_channel")
-                        .bind(welcome_channel.channel.to_string()).bind("i64")
+                        .bind(welcome.channel.to_string()).bind("i64")
                         .execute(&self.context.pool)
                         .await?;
 
@@ -110,7 +110,7 @@ impl InteractionContext<'_> {
                             Reply::new()
                                 .content(format!(
                                     "Welcome channel set to {}",
-                                    welcome_channel.channel.mention()
+                                    welcome.channel.mention()
                                 ))
                                 .ephemeral(),
                         )
