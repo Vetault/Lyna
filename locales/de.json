@@ -1,5 +1,4 @@
 {
-  "hello": "Hallo",
-  "hello_name": "Hallo, {name}!",
-  "test": "Dies ist ein Test"
+  "welcome_module_description": "Einrichten des Willkommensmoduls",
+  "debug_language": "Dies ist ein Text, den wir in jeder Sprache sehen können."
 }
