@@ -1,5 +1,4 @@
 {
-  "hello": "Hello",
-  "hello_name": "Hello, {name}!",
-  "test": "This is a test"
+  "welcome_module_description": "Setting up the welcome module",
+  "debug_language": "This is some text that we can see every language."
 }
