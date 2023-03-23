@@ -28,5 +28,14 @@
           ""
         ],
         "description": "Create Basic Command"
+      },
+      "Get Command Data": {
+        "prefix": "cmd_data",
+        "body": [
+          "let Some(InteractionData::ApplicationCommand(data)) = data else {return Ok(())};",
+          "let data: CommandData = *data;",
+          "let data = ${1:Command}::from_interaction(data.clone().into())?;"
+        ],
+        "description": "Get Command Data"
       }
 }
