@@ -14,9 +14,9 @@ env_logger = "0.10"
 futures-util = "0.3.26"
 metrics-runtime = "0.13.1"
 sea-query = { version = "0.28.3", features = ["backend-postgres", "postgres-array"] }
-serde_json = "1.0.87"
+serde_json = "1"
 sparkle-convenience = "0.15.0"
-sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "time"] }
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "json", "chrono"] }
 tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
@@ -40,6 +40,10 @@ twilight-standby = "0.15.0"
 twilight-util = { version = "0.15.0", features = ["full"] }
 twilight-validate = "0.15.0"
 rosetta-i18n = "0.1"
+serde = "1.0.158"
+time = { version = "0.3.20", features = ["macros"] }
+chrono-tz = "0.8.1"
+regex = "1.7.2"
 
 [build-dependencies]
 sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "time"] }
