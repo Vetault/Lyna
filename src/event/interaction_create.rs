@@ -1,5 +1,5 @@
 use crate::{
-    command::{ping::Ping, settings::Settings, test::Test2},
+    command::{debug::Debug, ping::Ping, settings::Settings, test::Test2},
     Context,
 };
 use anyhow::Result;
@@ -36,6 +36,7 @@ impl Context {
             Ping::NAME => interaction_ctx.execute_ping(latency).await,
             Settings::NAME => interaction_ctx.execute_settings().await,
             Test2::NAME => interaction_ctx.execute_test().await,
+            Debug::NAME => interaction_ctx.execute_debug().await,
             _ => Ok(()),
         };
 
