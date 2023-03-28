@@ -1,0 +1,6 @@
+{
+  "welcome_module_description": "Configurați modulul de bun venit",
+  "debug_language": "Acesta este un text pe care îl putem vedea în toate limbile.",
+  "welcome_module_success_title": "Welcome module",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
+}

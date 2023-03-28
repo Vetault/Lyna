@@ -1,0 +1,20 @@
+version: '3'
+services:
+  bot:
+    image: ghcr.io/Vetault/lyna
+    container_name: lyna
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN="DISCORD_TOKEN_HERE"
+      - DATABASE_URL="postgres://lyna:lyna@db:5432/lyna"
+      - RUST_LOG="info"
+      - TZ="Europe/Berlin"
+  db:
+    image: postgres:15
+    container_name: lyna-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=lyna
+      - POSTGRES_PASSWORD=lyna
+      - POSTGRES_DB=lyna
+      - TZ="Europe/Berlin"

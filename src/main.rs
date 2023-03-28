@@ -1,9 +1,17 @@
+use dotenvy::dotenv;
 use futures_util::StreamExt;
+use sea_query::{Iden, PostgresQueryBuilder, Query};
 use sparkle_convenience::Bot;
+use sqlx::{pool::PoolConnection, postgres::PgPoolOptions, PgPool, Postgres};
 use std::{env, sync::Arc};
+use translations::Lang;
 use twilight_cache_inmemory::InMemoryCache;
 use twilight_gateway::{stream::ShardEventStream, EventTypeFlags, Intents};
 use twilight_http::Client;
+
+pub mod translations {
+    rosetta_i18n::include_translations!();
+}
 
 mod command;
 mod event;
@@ -12,10 +20,10 @@ mod utils;
 
 #[derive(Debug)]
 pub struct Context {
-    pub client: Arc<Client>,
-    pub cache: Arc<InMemoryCache>,
     pub bot: Bot,
-    //pub shards: Vec<Shard>,
+    pub cache: Arc<InMemoryCache>,
+    pub pool: PgPool,
+    pub tz: chrono_tz::Tz,
 }
 
 #[tokio::main]
@@ -27,15 +35,33 @@ async fn main() -> anyhow::Result<()> {
 
     let token = env::var("DISCORD_TOKEN").expect("Expected a Discord Token in the environment");
 
-    let intents = Intents::GUILD_MESSAGES | Intents::GUILD_VOICE_STATES;
-    let event_types =
-        EventTypeFlags::READY | EventTypeFlags::INTERACTION_CREATE | EventTypeFlags::MESSAGE_CREATE;
-    let client = Arc::new(Client::new(token.clone()));
+    let intents = Intents::GUILD_MESSAGES
+        | Intents::GUILD_VOICE_STATES
+        | Intents::GUILDS
+        | Intents::GUILD_MEMBERS;
+    let event_types = EventTypeFlags::READY
+        | EventTypeFlags::INTERACTION_CREATE
+        | EventTypeFlags::MESSAGE_CREATE
+        | EventTypeFlags::MEMBER_ADD;
     let cache = Arc::new(InMemoryCache::new());
 
     let (bot, mut shards) = Bot::new(token.clone(), intents, event_types).await?;
 
-    let context = Arc::new(Context { client, cache, bot });
+    let pool = PgPool::connect(&env::var("DATABASE_URL")?).await?;
+    sqlx::migrate!().run(&pool).await?;
+
+    tracing::info!("{}", Lang::Sv.welcome_module_description());
+
+    let context = Arc::new(Context {
+        cache,
+        bot,
+        pool,
+        tz: env::var("TZ")
+            .expect("Expected a timezone in the environment")
+            .parse()
+            .expect("failed to parse timezone"),
+    });
+
     let mut stream = ShardEventStream::new(shards.iter_mut());
 
     while let Some((shard, event)) = stream.next().await {
@@ -53,7 +79,7 @@ async fn main() -> anyhow::Result<()> {
         };
         context.cache.update(&event);
 
-        tokio::spawn(handler::handle_event(
+        tokio::spawn(Context::handle_event(
             event,
             context.clone(),
             shard.latency().clone(),
@@ -61,4 +87,11 @@ async fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+#[derive(Iden)]
+enum Users {
+    Table,
+    #[iden = "id"]
+    Id,
 }

@@ -1,6 +1,6 @@
 [package]
 name = "bot"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -13,8 +13,10 @@ dotenvy = "0.15"
 env_logger = "0.10"
 futures-util = "0.3.26"
 metrics-runtime = "0.13.1"
-serde_json = "1.0.87"
+sea-query = { version = "0.28.3", features = ["backend-postgres", "postgres-array"] }
+serde_json = "1"
 sparkle-convenience = "0.15.0"
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "json", "chrono"] }
 tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
@@ -37,6 +39,18 @@ twilight-model = "0.15.0"
 twilight-standby = "0.15.0"
 twilight-util = { version = "0.15.0", features = ["full"] }
 twilight-validate = "0.15.0"
+rosetta-i18n = "0.1"
+serde = "1.0.158"
+time = { version = "0.3.20", features = ["macros"] }
+chrono-tz = "0.8.1"
+regex = "1.7.2"
+
+[build-dependencies]
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "time"] }
+tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
+dotenvy = "0.15"
+rosetta-build = "0.1"
+anyhow = "1.0"
 
 [profile.release]
 codegen-units = 1
@@ -45,3 +59,6 @@ incremental = false
 lto = true
 opt-level = 3
 panic = "abort"
+
+[profile.dev.package.sqlx-macros]
+opt-level = 3

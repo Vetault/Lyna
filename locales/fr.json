@@ -1,0 +1,6 @@
+{
+  "welcome_module_description": "Configurer le module de bienvenue",
+  "welcome_module_success_title": "Welcome module",
+  "debug_language": "Il s’agit d’un texte que l’on retrouve dans toutes les langues.",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
+}

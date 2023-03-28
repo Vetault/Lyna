@@ -1,0 +1,6 @@
+{
+  "welcome_module_description": "Konfigurer velkomstmodulet",
+  "welcome_module_success_title": "Welcome module",
+  "debug_language": "Det er en tekst, som vi kan se på alle sprog.",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
+}

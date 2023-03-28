@@ -1,0 +1,6 @@
+{
+  "welcome_module_description": "Mengkonfigurasi modul selamat datang",
+  "welcome_module_success_title": "Welcome module",
+  "debug_language": "Ini adalah beberapa teks yang dapat kita lihat dalam setiap bahasa.",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
+}

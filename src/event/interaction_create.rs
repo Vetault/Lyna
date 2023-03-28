@@ -1,4 +1,7 @@
-use crate::{command::ping::Ping, Context};
+use crate::{
+    command::{debug::Debug, ping::Ping, settings::Settings, test::Test2},
+    Context,
+};
 use anyhow::Result;
 use sparkle_convenience::{
     error::IntoError,
@@ -31,6 +34,9 @@ impl Context {
 
         let res = match interaction_ctx.interaction.name().ok()? {
             Ping::NAME => interaction_ctx.execute_ping(latency).await,
+            Settings::NAME => interaction_ctx.execute_settings().await,
+            Test2::NAME => interaction_ctx.execute_test().await,
+            Debug::NAME => interaction_ctx.execute_debug().await,
             _ => Ok(()),
         };
 
