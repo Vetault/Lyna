@@ -9,14 +9,19 @@ anyhow = "1.0"
 async-trait = "0.1"
 autometrics = { version = "0.2.3", features = ["prometheus-exporter"] }
 chrono = "0.4"
+chrono-tz = "0.8.1"
 dotenvy = "0.15"
 env_logger = "0.10"
 futures-util = "0.3.26"
 metrics-runtime = "0.13.1"
+regex = "1.7.2"
+rosetta-i18n = "0.1"
 sea-query = { version = "0.28.3", features = ["backend-postgres", "postgres-array"] }
+serde = "1.0.158"
 serde_json = "1"
 sparkle-convenience = "0.15.0"
-sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "json", "chrono"] }
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "json", "chrono", "offline"] }
+time = { version = "0.3.20", features = ["macros"] }
 tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
@@ -39,18 +44,13 @@ twilight-model = "0.15.0"
 twilight-standby = "0.15.0"
 twilight-util = { version = "0.15.0", features = ["full"] }
 twilight-validate = "0.15.0"
-rosetta-i18n = "0.1"
-serde = "1.0.158"
-time = { version = "0.3.20", features = ["macros"] }
-chrono-tz = "0.8.1"
-regex = "1.7.2"
 
 [build-dependencies]
-sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "time"] }
-tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
+anyhow = "1.0"
 dotenvy = "0.15"
 rosetta-build = "0.1"
-anyhow = "1.0"
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "time"] }
+tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
 
 [profile.release]
 codegen-units = 1
