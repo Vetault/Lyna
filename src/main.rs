@@ -39,8 +39,10 @@ async fn main() -> anyhow::Result<()> {
         | Intents::GUILD_VOICE_STATES
         | Intents::GUILDS
         | Intents::GUILD_MEMBERS;
-    let event_types =
-        EventTypeFlags::READY | EventTypeFlags::INTERACTION_CREATE | EventTypeFlags::MESSAGE_CREATE;
+    let event_types = EventTypeFlags::READY
+        | EventTypeFlags::INTERACTION_CREATE
+        | EventTypeFlags::MESSAGE_CREATE
+        | EventTypeFlags::MEMBER_ADD;
     let cache = Arc::new(InMemoryCache::new());
 
     let (bot, mut shards) = Bot::new(token.clone(), intents, event_types).await?;

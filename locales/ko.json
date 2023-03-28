@@ -1,4 +1,6 @@
 {
   "welcome_module_description": "환영 모듈 구성",
-  "debug_language": "모든 언어에서 볼 수 있는 텍스트입니다."
+  "debug_language": "모든 언어에서 볼 수 있는 텍스트입니다.",
+  "welcome_module_success_title": "Welcome module",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
 }

@@ -12,7 +12,7 @@ use twilight_util::builder::embed::{EmbedBuilder, EmbedFieldBuilder};
 
 use crate::{event::interaction_create::InteractionContext, translations::Lang};
 
-use super::InteractionLang;
+use super::{InteractionGetUser, InteractionLang};
 
 #[derive(CommandModel, CreateCommand)]
 #[command(name = "debug", desc = "To Debug The Bot")]
@@ -32,25 +32,30 @@ impl InteractionContext<'_> {
         match data.debug.as_str() {
             "welcome" => {
                 let settings = sqlx::query!(
-                    "SELECT * FROM welcome WHERE guild_id = $1",
+                    "SELECT channel_id, message FROM welcome WHERE guild_id = $1",
                     self.interaction.guild_id.ok()?.get() as i64
                 )
                 .fetch_one(&self.context.pool)
                 .await?;
+                let message = settings.message.ok()?;
 
-                let channel = settings.channel_id.map(|c| c as u64).unwrap();
-                tracing::error!("REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                tracing::info!("{}", channel);
-                let channel = Id::<ChannelMarker>::new(channel);
+                tracing::info!("{}", message.replace("!", "\n"));
 
-                let message = settings.message;
+                let text = message.as_str();
+                let rep = |caps: &regex::Captures| {
+                    let cap = caps.get(1).unwrap().as_str();
+                    match cap {
+                        "@user" => self.interaction.get_user().mention().to_string(),
+                        "user" => self.interaction.get_user().name.to_string(),
+                        _ => cap.to_string(),
+                    }
+                };
+
+                let re = Regex::new(r"\{(@?\w+)\}")?;
+                let text = re.replace_all(text, rep);
 
                 self.handle
-                    .reply(Reply::new().content(format!(
-                        "Welcome Channel is: {}\nWelcome Message is: {}",
-                        channel.mention(),
-                        message.map(|m| m).unwrap_or("None".to_string())
-                    )))
+                    .reply(Reply::new().content(format!("{}", text /* .replace("\\n", "\n") */)))
                     .await?;
             }
             "language" => {

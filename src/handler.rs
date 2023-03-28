@@ -17,6 +17,9 @@ impl Context {
             Event::InteractionCreate(interaction) => {
                 context.interaction_create(interaction.0, latency).await?;
             }
+            Event::MemberAdd(member) => {
+                context.member_add(*member).await?;
+            }
             _ => {}
         }
         Ok(())

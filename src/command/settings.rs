@@ -21,16 +21,13 @@ use twilight_model::{
 use twilight_util::builder::embed::EmbedBuilder;
 
 use crate::{
-    command::InteractionGetUser, event::interaction_create::InteractionContext, translations::Lang,
+    command::{InteractionGetUser, InteractionLang},
+    event::interaction_create::InteractionContext,
+    translations::Lang,
 };
 
 #[derive(CommandModel, CreateCommand)]
-#[command(
-    name = "settings",
-    desc = "Setting Up The Bot",
-    dm_permission = false,
-    default_permissions = "permissions"
-)]
+#[command(name = "settings", desc = "Setting Up The Bot", dm_permission = false)]
 pub enum Settings {
     #[command(name = "set")]
     Set(Set),
@@ -40,7 +37,8 @@ pub enum Settings {
 #[command(
     name = "set",
     desc = "Setting Up The Bot",
-    desc_localizations = "translate"
+    desc_localizations = "translate",
+    default_permissions = "permissions"
 )]
 pub enum Set {
     #[command(name = "welcome")]
@@ -61,85 +59,72 @@ pub struct Welcome {
     channel: Option<Id<ChannelMarker>>,
     #[command(desc = "set or update the welcome message")]
     message: Option<String>,
+    #[command(desc = "Activate or deactivate the welcome module")]
+    active: Option<bool>,
 }
 
 impl InteractionContext<'_> {
     pub async fn execute_settings(&self) -> Result<()> {
         let data = self.interaction.data.clone();
-        tracing::info!("{}", self.interaction.guild_id.unwrap().to_string());
 
         let Some(InteractionData::ApplicationCommand(data)) = data else {return Ok(())};
         let data: CommandData = *data;
         let settings = Settings::from_interaction(data.clone().into())?;
 
+        let lang = self.interaction.lang();
+
         match settings {
-            Settings::Set(set) => {
-                match set {
-                    Set::Welcome(welcome) => {
-                        let settings = sqlx::query!(
-                            "INSERT INTO welcome (guild_id, channel_id, message)
-                            VALUES ($1, $2, $3) ON CONFLICT (guild_id) DO
+            Settings::Set(set) => match set {
+                Set::Welcome(welcome) => {
+                    let x = welcome.channel.map(|i| i.get() as i64);
+                    tracing::info!("{:?}", x);
+                    let settings = sqlx::query!(
+                        "INSERT INTO welcome (guild_id, channel_id, message, active)
+                            VALUES ($1, $2, $3, $4) ON CONFLICT (guild_id) DO
                             UPDATE
                             SET channel_id = coalesce($2, welcome.channel_id),
-                                message = coalesce($3, welcome.message) RETURNING *",
-                            self.interaction.guild_id.ok()?.get() as i64,
-                            welcome.channel.map(|i| i.get() as i64),
-                            welcome.message
+                                message = coalesce($3, welcome.message),
+                                active = coalesce($4, welcome.active)
+                                 RETURNING *",
+                        self.interaction.guild_id.ok()?.get() as i64,
+                        welcome.channel.map(|i| i.get() as i64),
+                        welcome.message.map(|m| m.replace("\\n", "\n")),
+                        welcome.active
+                    )
+                    .fetch_one(&self.context.pool)
+                    .await?;
+
+                    let message = &settings.message;
+
+                    self.handle
+                        .reply(
+                            Reply::new().embed(
+                                EmbedBuilder::new()
+                                    .title(format!("{}", lang.welcome_module_success_title()))
+                                    .description(
+                                        lang.welcome_module_success_description(
+                                            settings.active.unwrap_or(false).to_string(),
+                                            settings
+                                                .channel_id
+                                                .map(|i| {
+                                                    Id::<ChannelMarker>::new(i as u64)
+                                                        .mention()
+                                                        .to_string()
+                                                })
+                                                .unwrap_or("**Null**".to_string()),
+                                            message
+                                                .as_ref()
+                                                .map(|m| m.replace("\n", "\\n"))
+                                                .unwrap_or("**Null**".to_string()),
+                                            message.as_ref().unwrap_or(&"**Null**".to_string()),
+                                        ),
+                                    )
+                                    .build(),
+                            ),
                         )
-                        .fetch_one(&self.context.pool)
                         .await?;
-
-                        tracing::info!("{:#?}", &self.interaction.get_user().locale);
-
-                        let lang = self.interaction.locale.as_ref().ok()?;
-                        tracing::info!("{:#?}", lang);
-
-                        //transform the user language into a Lang enum
-                        let lang = match lang.as_str() {
-                            "bg" => Lang::Bg,
-                            "cs" => Lang::Cs,
-                            "da" => Lang::Da,
-                            "de" => Lang::De,
-                            "el" => Lang::El,
-                            "en-US" => Lang::En,
-                            "en-GB" => Lang::En,
-                            "es-ES" => Lang::Es,
-                            "fi" => Lang::Fi,
-                            "fr" => Lang::Fr,
-                            "hu" => Lang::Hu,
-                            "id" => Lang::Id,
-                            "it" => Lang::It,
-                            "ja" => Lang::Ja,
-                            "ko" => Lang::Ko,
-                            "nl" => Lang::Nl,
-                            "no" => Lang::No,
-                            "pl" => Lang::Pl,
-                            "ro" => Lang::Ro,
-                            "ru" => Lang::Ru,
-                            "sv-SE" => Lang::Sv,
-                            "tr" => Lang::Tr,
-                            "uk" => Lang::Uk,
-                            "zh-CN" => Lang::Zh,
-                            _ => Lang::En,
-                        };
-
-                        self.handle
-                            .reply(
-                                Reply::new().embed(
-                                    EmbedBuilder::new()
-                                        .title("Welcome Module")
-                                        .description(format!(
-                                            "**Successfully set Welcome Settings**\n\nChannel: \n\nTest: {}",
-                                            //settings.channel_id.ok()? as u64
-                                            lang.welcome_module_description()
-                                        ))
-                                        .build(),
-                                ),
-                            )
-                            .await?;
-                    }
                 }
-            }
+            },
         }
 
         Ok(())

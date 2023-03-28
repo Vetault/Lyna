@@ -1,4 +1,6 @@
 {
   "welcome_module_description": "De welkomstmodule configureren",
-  "debug_language": "Dit is een tekst die we in elke taal kunnen zien."
+  "welcome_module_success_title": "Welcome module",
+  "debug_language": "Dit is een tekst die we in elke taal kunnen zien.",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
 }

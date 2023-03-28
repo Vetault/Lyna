@@ -1,4 +1,6 @@
 {
   "welcome_module_description": "配置欢迎模块",
-  "debug_language": "这是一些我们可以看到每种语言的文字。"
+  "welcome_module_success_title": "Welcome module",
+  "debug_language": "这是一些我们可以看到每种语言的文字。",
+  "welcome_module_success_description": "**Succesfull set/updated**\n\nChannel: {channel}\nMessage: {message}\nFormatted Message: {formatted_message}\nActive: {active}"
 }
