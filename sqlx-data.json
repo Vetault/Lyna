@@ -1,3 +1,108 @@
 {
-  "db": "PostgreSQL"
+  "db": "PostgreSQL",
+  "36c69a923654c430f3ffbcb1d0ab10d2aa7b4cf69c76e74f0febeb9bf17fb9c7": {
+    "describe": {
+      "columns": [
+        {
+          "name": "channel_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "message",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT channel_id, message FROM welcome WHERE guild_id = $1"
+  },
+  "6dab795f85f6e8d02f0a8b897c0ffdd9b71a185da6f7896e381380b45e4f9cdb": {
+    "describe": {
+      "columns": [
+        {
+          "name": "guild_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "channel_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "message",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "active",
+          "ordinal": 3,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM welcome WHERE guild_id = $1"
+  },
+  "b1dd1a4f66afa1031f76da5c9d49ac23cfac3dc3bb2d0d36e3492c42acd7392d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "guild_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "channel_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "message",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "active",
+          "ordinal": 3,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8",
+          "Text",
+          "Bool"
+        ]
+      }
+    },
+    "query": "INSERT INTO welcome (guild_id, channel_id, message, active)\n                            VALUES ($1, $2, $3, $4) ON CONFLICT (guild_id) DO\n                            UPDATE\n                            SET channel_id = coalesce($2, welcome.channel_id),\n                                message = coalesce($3, welcome.message),\n                                active = coalesce($4, welcome.active)\n                                 RETURNING *"
+  }
 }
