@@ -23,6 +23,10 @@ RUN apk upgrade && \
 # Set up a cross compiler if needed.
 # This also configures rustc to link with the cross compiler and use the nightly-only
 # build-std feature.
+RUN mkdir -p /app/out_dir
+
+RUN OUT_DIR="/app/out_dir"
+
 RUN source $HOME/.cargo/env && \
     mkdir -p /app/.cargo && \
     if [ "$RUST_TARGET" != $(rustup target list --installed) ]; then \
