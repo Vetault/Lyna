@@ -57,13 +57,15 @@ WORKDIR /app
 # Copy our dependency file
 COPY Cargo.toml Cargo.lock ./
 
+ENV OUT_DIR=/app/target
+
 # Run a build with an empty main.rs file, basically a fake source.
 # Why? Because this allows Docker to cache all dependencies, and it
 # won't recompile all of them if you rebuild your image.
 RUN mkdir src/
 RUN echo 'fn main() {}' > ./src/main.rs
 RUN source $HOME/.cargo/env && \
-    cargo build --release --target="$RUST_TARGET" --out-dir=/app/target
+    cargo build --release --target="$RUST_TARGET"
 
 # Now, delete the fake source and copy in the actual source. This allows us to
 # have a previous compilation step for compiling the dependencies, while being
