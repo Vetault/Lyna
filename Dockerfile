@@ -23,10 +23,6 @@ RUN apk upgrade && \
 # Set up a cross compiler if needed.
 # This also configures rustc to link with the cross compiler and use the nightly-only
 # build-std feature.
-RUN mkdir -p /app/out_dir
-
-RUN OUT_DIR="/app/out_dir"
-
 RUN source $HOME/.cargo/env && \
     mkdir -p /app/.cargo && \
     if [ "$RUST_TARGET" != $(rustup target list --installed) ]; then \
@@ -67,7 +63,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN mkdir src/
 RUN echo 'fn main() {}' > ./src/main.rs
 RUN source $HOME/.cargo/env && \
-    cargo build --release --target="$RUST_TARGET"
+    cargo build --release --target="$RUST_TARGET" --out-dir=/app/target
 
 # Now, delete the fake source and copy in the actual source. This allows us to
 # have a previous compilation step for compiling the dependencies, while being
