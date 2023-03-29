@@ -57,6 +57,8 @@ WORKDIR /app
 # Copy our dependency file
 COPY Cargo.toml Cargo.lock ./
 
+RUN mkdir /app/target
+
 ENV OUT_DIR=/app/target
 
 # Run a build with an empty main.rs file, basically a fake source.
