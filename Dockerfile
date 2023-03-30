@@ -56,6 +56,7 @@ WORKDIR /app
 
 # Copy our dependency file
 COPY Cargo.toml Cargo.lock ./
+COPY build.rs ./
 
 
 # Run a build with an empty main.rs file, basically a fake source.
@@ -82,7 +83,6 @@ COPY ./src ./src
 # If you depend on any other files (e.g. database schemas), COPY them here too
 COPY ./migrations ./migrations
 COPY ./locales ./locales
-COPY ./build.rs ./build.rs
 
 # Compile our actual source and strip the resulting binary.
 RUN source $HOME/.cargo/env && \
