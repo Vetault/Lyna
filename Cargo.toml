@@ -9,7 +9,7 @@ build = "build.rs"
 [dependencies]
 anyhow = "1.0"
 async-trait = "0.1"
-autometrics = { version = "0.2.3", features = ["prometheus-exporter"] }
+autometrics = { version = "0.3.2", features = ["prometheus-exporter"] }
 chrono = "0.4"
 chrono-tz = "0.8.1"
 dotenvy = "0.15"
@@ -21,7 +21,7 @@ rosetta-i18n = "0.1"
 sea-query = { version = "0.28.3", features = ["backend-postgres", "postgres-array"] }
 serde = "1.0.158"
 serde_json = "1"
-sparkle-convenience = "0.15.0"
+sparkle-convenience = { version = "0.15", default-features = false }
 sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "migrate", "json", "chrono", "offline"] }
 time = { version = "0.3.20", features = ["macros"] }
 tokio = { version = "1.25.0", features = ["tokio-macros", "full"] }
