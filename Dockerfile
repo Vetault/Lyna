@@ -59,6 +59,7 @@ COPY Cargo.toml Cargo.lock ./
 # If you depend on any other files (e.g. database schemas), COPY them here too
 COPY ./migrations ./migrations
 COPY ./locales ./locales
+COPY sqlx-data.json ./
 COPY build.rs ./
 
 
