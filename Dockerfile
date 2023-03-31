@@ -56,6 +56,9 @@ WORKDIR /app
 
 # Copy our dependency file
 COPY Cargo.toml Cargo.lock ./
+# If you depend on any other files (e.g. database schemas), COPY them here too
+COPY ./migrations ./migrations
+COPY ./locales ./locales
 COPY build.rs ./
 
 
@@ -80,9 +83,6 @@ RUN source $HOME/.cargo/env && \
 RUN rm -f target/$RUST_TARGET/release/deps/bot*
 COPY ./src ./src
 
-# If you depend on any other files (e.g. database schemas), COPY them here too
-COPY ./migrations ./migrations
-COPY ./locales ./locales
 
 # Compile our actual source and strip the resulting binary.
 RUN source $HOME/.cargo/env && \
